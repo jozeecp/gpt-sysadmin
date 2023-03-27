@@ -14,7 +14,7 @@ from jinja2 import Template
 redis_db = os.environ.get("TASK_REDIS_DB")
 
 
-class MessageSerivce(BaseService):
+class MessageService(BaseService):
     """Message service"""
 
     def __init__(self):
@@ -51,7 +51,7 @@ class TaskService(BaseService):
     def __init__(self):
         super().__init__(redis_db=redis_db)
 
-    def create_task(self, task: Task) -> None:
+    def create_task(self, task: Task) -> Task:
         """Create a new task"""
 
         # render jinja2 template to get prompt
@@ -66,4 +66,12 @@ class TaskService(BaseService):
         # register task in redis
         self.redis_client.set(task.taskId, task.json())
 
-        return
+        return task
+
+    def get_task(self, task_id: str) -> Task:
+        """Get a task"""
+
+        # get task from redis
+        task = self.redis_client.get(task_id)
+
+        return task

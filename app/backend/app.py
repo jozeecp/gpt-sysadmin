@@ -1,8 +1,9 @@
 """Backend API for the task manager"""
 from uuid import uuid4
 
+import app.backend.functions.tasks.post.handler.handler as task_post_handler
 from flask import Flask, request, jsonify
-from models.task import Task
+from app.backend.models.task import Task
 
 app = Flask(__name__)
 
@@ -27,9 +28,10 @@ def create_task():
             "messages": [],
         }
     )
-    tasks[task_id] = task
 
-    response = {"task": task.dict()}
+    new_task = task_post_handler.handler(task)
+
+    response = {"task": new_task.dict()}
     return jsonify(response), 201
 
 
