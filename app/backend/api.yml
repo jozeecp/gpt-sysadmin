@@ -1,0 +1,117 @@
+openapi: 3.0.0
+info:
+  title: GPT-SysAdmin API
+  description: API for the GPT-SysAdmin containerized application
+  version: "1.0.0"
+servers:
+  - url: https://api.example.com/v1
+paths:
+  /tasks:
+    post:
+      summary: Add a new task
+      operationId: createTask
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskModel'
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  taskId:
+                    type: string
+                    format: uuid
+                  status:
+                    type: string
+                    enum: [pending, running, completed, error]
+
+  /tasks/{taskId}/messages:
+    post:
+      summary: Send a message for a task
+      operationId: sendMessage
+      parameters:
+        - name: taskId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  description: The message sent by the user
+      responses:
+        201:
+          description: Message sent successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: [success]
+  /tasks/{taskId}:
+    get:
+      summary: Get task status and messages
+      operationId: getTask
+      parameters:
+        - name: taskId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: Task found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  taskId:
+                    type: string
+                    format: uuid
+                  status:
+                    type: string
+                    enum: [pending, running, completed, error]
+                  messages:
+                    type: array
+                    items:
+                      type: string
+
+components:
+  schemas:
+    TaskModel:
+      type: object
+      properties:
+        taskDescription:
+          type: string
+        hostDescription:
+          type: string
+        host:
+          type: string
+          description: hostname or IPV4
+        user:
+          type: string
+          description: defaults to root if not given
+        supervised:
+          type: boolean
+      required:
+        - taskDescription
+        - hostDescription
+        - host
+        - supervised
