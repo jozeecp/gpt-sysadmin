@@ -5,7 +5,7 @@ e(){
 }
 
 NEEDED_BASE_PYTHON=3.10.3
-NEEDED_PYENV_ENV=ansible_runner_env
+NEEDED_PYENV_ENV=gpt_sysadmin
 
 if ! which pyenv >/dev/null 2>&1; then
     e "ERROR: must have pyenv installed"
