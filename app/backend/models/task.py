@@ -7,6 +7,7 @@ class Message(BaseModel):
 
     role: str = "user"
 
+
 class GPTMessage(Message):
     """Message model"""
 
@@ -14,10 +15,12 @@ class GPTMessage(Message):
     human_msg: str
     machine_msg: str
 
+
 class HostMessage(Message):
     """Message model"""
 
     machine_msg: str
+
 
 class SystemMessage(Message):
     """Message model"""

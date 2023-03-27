@@ -9,6 +9,7 @@ from app.backend.models.task import (
     ParsedMessage,
 )
 
+
 class ParserFactory:
     """Parser factory"""
 
@@ -21,6 +22,7 @@ class ParserFactory:
             return SystemParser()
         if isinstance(msg, HostMessage):
             return HostParser()
+
 
 class GPTParser:
     """GPT parser"""
@@ -36,6 +38,7 @@ class GPTParser:
 
         return ParsedMessage(role=msg.role, content=content_str)
 
+
 class SystemParser:
     """System parser"""
 
@@ -46,6 +49,7 @@ class SystemParser:
         content_str = content
 
         return ParsedMessage(role=msg.role, content=content_str)
+
 
 class HostParser:
     """Host parser"""

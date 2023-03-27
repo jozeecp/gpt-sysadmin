@@ -7,8 +7,10 @@ from backend.libs.base_service import BaseService
 
 redis_db = os.environ.get("PARAMIKO_REDIS_DB")
 
+
 class CmdService(BaseService):
     """Command service."""
+
     def __init__(self):
         super().__init__(redis_db=redis_db)
 
@@ -35,8 +37,8 @@ class CmdService(BaseService):
             client = self.refresh_client(request_id)
             _, stdout, stderr = client.exec_command(command)
 
-        output = stdout.read().decode('utf-8')
-        error = stderr.read().decode('utf-8')
+        output = stdout.read().decode("utf-8")
+        error = stderr.read().decode("utf-8")
 
         # Print output or do something else with it
         print(output)
@@ -47,7 +49,7 @@ class CmdService(BaseService):
         # return output or error
         return output or error
 
-    def store_client(self, request_id, client, close = False) -> None:
+    def store_client(self, request_id, client, close=False) -> None:
         """Store client in Redis."""
         client_bytes = pickle.dumps(client)
         if close:
@@ -66,7 +68,9 @@ class CmdService(BaseService):
         client = paramiko.SSHClient()
         client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         client.connect(
-            hostname='your_server_hostname', username='your_username', password='your_password'
+            hostname="your_server_hostname",
+            username="your_username",
+            password="your_password",
         )
 
         self.store_client(request_id, client)
