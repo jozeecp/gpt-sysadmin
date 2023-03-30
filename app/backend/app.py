@@ -65,5 +65,17 @@ def get_task(task_id):
     return jsonify(response), 200
 
 
+@app.route("v1/hosts", methods=["POST"])
+def create_host():
+    """Create a new host"""
+
+
+@app.route("v1/hosts/<string:host_id>", methods=["GET"])
+def get_host(host_id):
+    """Get a host"""
+
+    print(host_id)
+
+
 if __name__ == "__main__":
     app.run(debug=True)
