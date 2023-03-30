@@ -1,5 +1,6 @@
+"""Task models"""
 from enum import Enum
-from typing import List, Optional, Union
+from typing import List
 
 from pydantic import BaseModel
 
@@ -43,6 +44,7 @@ class EngineEnum(str, Enum):
 
     GPT_3_5 = "gpt-3.5-turbo"
     GPT_4 = "gpt-4"
+
 
 class StatusEnum(str, Enum):
     """Status enum"""

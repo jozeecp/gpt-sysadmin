@@ -1,11 +1,8 @@
 """OpenAI response model"""
 
-from typing import (
-    List,
-)
+from typing import List
 
 from pydantic import BaseModel
-from app.backend.models.task import Message
 
 
 class Usage(BaseModel):
