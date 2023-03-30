@@ -70,7 +70,6 @@ def create_host():
     """Create a new host"""
 
 
-
 @app.route("v1/hosts/<string:host_id>", methods=["GET"])
 def get_host(host_id):
     """Get a host"""
