@@ -3,8 +3,8 @@
 import unittest
 from unittest.mock import MagicMock
 
-from app.backend.models.task import Task, HostMessage
-from app.backend.functions.tasks.post.handler import handler
+from backend.models.task import Task, HostMessage
+from backend.functions.tasks.post.handler import handler
 
 
 class TestHandler(unittest.TestCase):
