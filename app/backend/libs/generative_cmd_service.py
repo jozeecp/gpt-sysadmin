@@ -7,21 +7,14 @@ Utilizes the OpenAI API to generate commands.
 
 import json
 import os
-from typing import (
-    Any,
-    Dict,
-    List,
-)
+from typing import Any, Dict, List
+
+import openai
 
 from app.backend.libs.base_service import BaseService
 from app.backend.libs.task_service import MessageService
 from app.backend.models.open_ai_resp import OpenAIResponse
-from app.backend.models.task import (
-    GPTMessage,
-    ParsedMessage,
-    Task
-)
-import openai
+from app.backend.models.task import GPTMessage, ParsedMessage, Task
 
 # OpenAI API key
 api_key = os.environ.get("OPENAI_API_KEY")

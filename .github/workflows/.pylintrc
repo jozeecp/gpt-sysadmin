@@ -1,0 +1,8 @@
+[FORMAT]
+# Disable checks already handled by Black
+disable=invalid-name, import-error, too-few-public-methods, no-name-in-module
+
+[MISCELLANEOUS]
+# Configure the notes feature to exclude TODOs, since Black does not handle them
+notes=XXX
+

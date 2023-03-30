@@ -1,8 +1,9 @@
 """Backend API for the task manager"""
 from uuid import uuid4
 
-import app.backend.functions.tasks.post.handler.handler as task_post_handler
-from flask import Flask, request, jsonify
+import backend.functions.tasks.post.handler.handler as task_post_handler
+from flask import Flask, jsonify, request
+
 from app.backend.models.task import Task
 
 app = Flask(__name__)

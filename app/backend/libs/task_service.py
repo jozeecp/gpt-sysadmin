@@ -1,15 +1,12 @@
 """Task service"""
 import os
 
+from jinja2 import Template
+
 # import jinja2
 from app.backend.libs.base_service import BaseService
 from app.backend.libs.parser_factory import ParserFactory
-from app.backend.models.task import Message, ParsedMessage
-from app.backend.models.task import (
-    Task,
-    SystemMessage,
-)
-from jinja2 import Template
+from app.backend.models.task import Message, ParsedMessage, SystemMessage, Task
 
 redis_db = os.environ.get("TASK_REDIS_DB")
 
@@ -55,7 +52,7 @@ class TaskService(BaseService):
         """Create a new task"""
 
         # render jinja2 template to get prompt
-        with open("templates/prompt.jinja2", "r") as f:
+        with open("templates/prompt.jinja2", encoding="utf-8") as f:
             template = Template(f.read())
             f.close()
         prompt = template.render(task=task.dict())

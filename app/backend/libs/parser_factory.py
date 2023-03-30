@@ -1,13 +1,16 @@
 """parser factory"""
-from typing import Union
 
 from app.backend.models.task import (
     GPTMessage,
     HostMessage,
     Message,
-    SystemMessage,
     ParsedMessage,
+    SystemMessage,
 )
+
+
+class ParserNotFound(Exception):
+    """Parser not found exception"""
 
 
 class ParserFactory:
@@ -22,6 +25,8 @@ class ParserFactory:
             return SystemParser()
         if isinstance(msg, HostMessage):
             return HostParser()
+
+        raise ParserNotFound("Parser not found")
 
 
 class GPTParser:
