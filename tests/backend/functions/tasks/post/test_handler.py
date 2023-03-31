@@ -40,21 +40,21 @@ class TestHandler(unittest.TestCase):
             "id": "chatcmpl-123",
             "object": "chat.completion",
             "created": 1677652288,
-            "choices": [{
-                "index": 0,
-                "message": {
-                "role": "assistant",
-                "content": "{\"human_msg\": \"sample command\", \"machine_msg\": \"sample output\"}",
-                },
-                "finish_reason": "stop"
-            }],
-            "usage": {
-                "prompt_tokens": 9,
-                "completion_tokens": 12,
-                "total_tokens": 21
-            }
+            "choices": [
+                {
+                    "index": 0,
+                    "message": {
+                        "role": "assistant",
+                        "content": '{\
+                            "human_msg": "sample command",\
+                            "machine_msg": "sample output"\
+                        }',
+                    },
+                    "finish_reason": "stop",
+                }
+            ],
+            "usage": {"prompt_tokens": 9, "completion_tokens": 12, "total_tokens": 21},
         }
-
 
         with unittest.mock.patch.object(
             openai.ChatCompletion, "create", return_value=chat_completion_response
