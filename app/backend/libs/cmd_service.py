@@ -4,8 +4,8 @@ import pickle
 
 import paramiko
 
-from app.backend.libs.base_service import BaseService
-from app.backend.models.task import Task
+from backend.libs.base_service import BaseService
+from backend.models.task import Task
 
 redis_db = os.environ.get("PARAMIKO_REDIS_DB")
 

@@ -11,10 +11,10 @@ from typing import Any, Dict, List
 
 import openai
 
-from app.backend.libs.base_service import BaseService
-from app.backend.libs.task_service import MessageService
-from app.backend.models.open_ai_resp import OpenAIResponse
-from app.backend.models.task import GPTMessage, ParsedMessage, Task
+from backend.libs.base_service import BaseService
+from backend.libs.task_service import MessageService
+from backend.models.open_ai_resp import OpenAIResponse
+from backend.models.task import GPTMessage, ParsedMessage, Task
 
 # OpenAI API key
 api_key = os.environ.get("OPENAI_API_KEY")

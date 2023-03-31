@@ -4,9 +4,9 @@ import os
 from jinja2 import Template
 
 # import jinja2
-from app.backend.libs.base_service import BaseService
-from app.backend.libs.parser_factory import ParserFactory
-from app.backend.models.task import Message, ParsedMessage, SystemMessage, Task
+from backend.libs.base_service import BaseService
+from backend.libs.parser_factory import ParserFactory
+from backend.models.task import Message, ParsedMessage, SystemMessage, Task
 
 redis_db = os.environ.get("TASK_REDIS_DB")
 
