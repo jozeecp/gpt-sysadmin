@@ -9,3 +9,9 @@ isort .
 black .
 pylint $(git ls-files '*.py') --rcfile=./.github/workflows/.pylintrc
 ```
+
+## Unit Testing
+
+```bash
+python -m unittest discover tests
+```

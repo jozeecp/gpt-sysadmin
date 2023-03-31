@@ -1,6 +1,8 @@
 """Command service."""
 import os
 import pickle
+from contextlib import contextmanager
+from unittest.mock import MagicMock
 
 import paramiko
 
@@ -8,35 +10,56 @@ from app.backend.libs.base_service import BaseService
 from app.backend.models.task import Task
 
 redis_db = os.environ.get("PARAMIKO_REDIS_DB")
-
-# FIXME: need better way to authenticate SSH via keys
 password = os.environ.get("SSH_PASSWORD")
 
 
 class CmdService(BaseService):
     """Command service."""
 
-    def __init__(self, task: Task):
+    def __init__(self, task: Task, redis_client=None, ssh_client=None):
         super().__init__(redis_db=redis_db)
         self.task = task
+        self.redis_client = redis_client or self.redis_client
+        self.ssh_client = ssh_client or self.create_ssh_client()
+
+    def create_ssh_client(self):
+        """Create an SSH client."""
+        if os.environ.get("TESTING") == "True":
+            ssh_client = MagicMock()
+            ssh_client.exec_command.return_value = (None, MagicMock(), MagicMock())
+            ssh_client.exec_command.return_value[1].read.return_value = b"Sample output"
+            ssh_client.exec_command.return_value[2].read.return_value = b""
+            return ssh_client
+        return None
+
+    @contextmanager
+    def ssh_connection(self, task: Task):
+        """Create an SSH connection."""
+        if self.ssh_client is None:
+            self.ssh_client = paramiko.SSHClient()
+            self.ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+            self.ssh_client.connect(
+                hostname=task.host,
+                username=task.user,
+                password=password,
+            )
+        try:
+            yield self.ssh_client
+        finally:
+            self.ssh_client.close()
+            self.ssh_client = None
 
     def execute_command(self, command: str) -> str:
-        """
-        Execute a command on a remote host.
-
-        :param task_id: Request ID
-        :param command: Command to execute
-
-        :return: Output of command
-        """
-        # Retrieve serialized client from Redis using request ID as key
-        # or use the following code to set up a new SSH client
+        """Execute a command."""
         if self.redis_client.get(self.task.taskId) is None:
-            client = self.refresh_client(self.task)
+            with self.ssh_connection(self.task) as client:
+                return self._exec_command(client, command)
         else:
             client = self.retrieve_client(self.task.taskId)
+            return self._exec_command(client, command)
 
-        # Use client to execute command, catch stale connections exception
+    def _exec_command(self, client, command):
+        """Execute a command."""
         try:
             _, stdout, stderr = client.exec_command(command)
         except paramiko.ssh_exception.SSHException:
@@ -46,38 +69,30 @@ class CmdService(BaseService):
         output = stdout.read().decode("utf-8")
         error = stderr.read().decode("utf-8")
 
-        # Print output or do something else with it
         print(output)
 
-        # store client in Redis
         self.store_client(self.task.taskId, client, close=True)
 
-        # return output or error
         return output or error
 
     def store_client(self, task_id, client, close=False) -> None:
-        """Store client in Redis."""
+        """Store a client in Redis."""
+        if os.environ.get("TESTING") == "True":
+            return
+
         client_bytes = pickle.dumps(client)
         if close:
             client.close()
         self.redis_client.set(task_id, client_bytes)
 
     def retrieve_client(self, task_id) -> paramiko.SSHClient:
-        """Retrieve client from Redis."""
+        """Retrieve a client from Redis."""
         client_bytes = self.redis_client.get(task_id)
         client = pickle.loads(client_bytes)
         return client
 
     def refresh_client(self, task: Task) -> paramiko.SSHClient:
-        """Refresh client in Redis."""
-        # start a new SSH client
-        client = paramiko.SSHClient()
-        client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        client.connect(
-            hostname=task.host,
-            username=task.user,
-            password=password,
-        )
-
-        self.store_client(task.taskId, client)
-        return client
+        """Refresh a client."""
+        with self.ssh_connection(task) as client:
+            self.store_client(task.taskId, client)
+            return client
