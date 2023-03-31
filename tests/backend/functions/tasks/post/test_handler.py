@@ -1,8 +1,9 @@
 """Test handler function"""
 
-import openai
 import unittest
 from unittest.mock import MagicMock
+
+import openai
 
 from app.backend.functions.tasks.post.handler import handler
 from app.backend.models.task import HostMessage, Task

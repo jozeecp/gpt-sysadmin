@@ -3,10 +3,11 @@ import os
 import sys
 from uuid import uuid4
 
-from app.backend.functions.tasks.post.handler import handler as task_post_handler
-from app.backend.models.task import Task
 from flask import Flask, jsonify, request
 
+from app.backend.functions.tasks.post.handler import \
+    handler as task_post_handler
+from app.backend.models.task import Task
 
 # Add the directory containing this script to the Python path
 script_dir = os.path.dirname(os.path.realpath(__file__))
