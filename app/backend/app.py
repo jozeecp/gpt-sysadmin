@@ -1,11 +1,16 @@
 """Backend API for the task manager"""
+import os
+import sys
 from uuid import uuid4
 
-import backend.functions.tasks.post.handler.handler as task_post_handler
 from flask import Flask, jsonify, request
 
+from app.backend.functions.tasks.post.handler import handler as task_post_handler
 from app.backend.models.task import Task
 
+# Add the directory containing this script to the Python path
+script_dir = os.path.dirname(os.path.realpath(__file__))
+sys.path.append(script_dir)
 app = Flask(__name__)
 
 tasks = {}
@@ -30,7 +35,7 @@ def create_task():
         }
     )
 
-    new_task = task_post_handler.handler(task)
+    new_task = task_post_handler(task)
 
     response = {"task": new_task.dict()}
     return jsonify(response), 201

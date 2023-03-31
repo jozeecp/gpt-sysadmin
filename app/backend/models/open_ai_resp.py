@@ -41,6 +41,6 @@ class OpenAIResponse(BaseModel):
     id: str
     object: str
     created: int
-    model: str
+    # model: str
     usage: Usage
     choices: List[Choice]

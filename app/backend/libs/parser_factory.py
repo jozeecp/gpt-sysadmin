@@ -1,7 +1,12 @@
 """parser factory"""
 
-from app.backend.models.task import (GPTMessage, HostMessage, Message,
-                                     ParsedMessage, SystemMessage)
+from app.backend.models.task import (
+    GPTMessage,
+    HostMessage,
+    Message,
+    ParsedMessage,
+    SystemMessage,
+)
 
 
 class ParserNotFound(Exception):
