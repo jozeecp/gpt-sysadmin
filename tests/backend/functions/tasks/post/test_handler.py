@@ -1,5 +1,6 @@
 """Test handler function"""
 
+import openai
 import unittest
 from unittest.mock import MagicMock
 
@@ -29,9 +30,34 @@ class TestHandler(unittest.TestCase):
         cmd_service.execute_command.return_value = "sample output"
 
         # Mock Task
-        task = Task()
+        task = MagicMock()
+        task.taskId = "some_task_id"
+        task.json.return_value = '{"key": "value"}'  # A valid JSON string
 
-        with unittest.mock.patch(
+        # Mock OpenAI
+        chat_completion_response = {
+            "id": "chatcmpl-123",
+            "object": "chat.completion",
+            "created": 1677652288,
+            "choices": [{
+                "index": 0,
+                "message": {
+                "role": "assistant",
+                "content": "{\"human_msg\": \"sample command\", \"machine_msg\": \"sample output\"}",
+                },
+                "finish_reason": "stop"
+            }],
+            "usage": {
+                "prompt_tokens": 9,
+                "completion_tokens": 12,
+                "total_tokens": 21
+            }
+        }
+
+
+        with unittest.mock.patch.object(
+            openai.ChatCompletion, "create", return_value=chat_completion_response
+        ), unittest.mock.patch(
             "app.backend.libs.task_service.TaskService", return_value=task_service
         ), unittest.mock.patch(
             "app.backend.libs.task_service.MessageService", return_value=message_service

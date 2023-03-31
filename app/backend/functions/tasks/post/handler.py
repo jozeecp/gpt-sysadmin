@@ -1,8 +1,8 @@
 """Task creation handler"""
-from backend.libs.cmd_service import CmdService
-from backend.libs.generative_cmd_service import GenerativeCmdService
-from backend.libs.task_service import MessageService, TaskService
-from backend.models.task import HostMessage, Task
+from app.backend.libs.cmd_service import CmdService
+from app.backend.libs.generative_cmd_service import GenerativeCmdService
+from app.backend.libs.task_service import MessageService, TaskService
+from app.backend.models.task import HostMessage, Task
 
 
 def handler(task: Task) -> Task:

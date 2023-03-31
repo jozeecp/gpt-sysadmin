@@ -4,8 +4,8 @@ import pickle
 
 import paramiko
 
-from backend.libs.base_service import BaseService
-from backend.models.task import Task
+from app.backend.libs.base_service import BaseService
+from app.backend.models.task import Task
 
 redis_db = os.environ.get("PARAMIKO_REDIS_DB")
 
@@ -32,7 +32,7 @@ class CmdService(BaseService):
         # Retrieve serialized client from Redis using request ID as key
         # or use the following code to set up a new SSH client
         if self.redis_client.get(self.task.taskId) is None:
-            client = self.refresh_client(self.task.taskId)
+            client = self.refresh_client(self.task)
         else:
             client = self.retrieve_client(self.task.taskId)
 
@@ -40,7 +40,7 @@ class CmdService(BaseService):
         try:
             _, stdout, stderr = client.exec_command(command)
         except paramiko.ssh_exception.SSHException:
-            client = self.refresh_client(self.task.taskId)
+            client = self.refresh_client(self.task)
             _, stdout, stderr = client.exec_command(command)
 
         output = stdout.read().decode("utf-8")

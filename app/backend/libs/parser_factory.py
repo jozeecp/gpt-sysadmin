@@ -1,6 +1,6 @@
 """parser factory"""
 
-from backend.models.task import (
+from app.backend.models.task import (
     GPTMessage,
     HostMessage,
     Message,

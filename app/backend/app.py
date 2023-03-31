@@ -3,8 +3,8 @@ import os
 import sys
 from uuid import uuid4
 
-from backend.functions.tasks.post.handler import handler as task_post_handler
-from backend.models.task import Task
+from app.backend.functions.tasks.post.handler import handler as task_post_handler
+from app.backend.models.task import Task
 from flask import Flask, jsonify, request
 
 
