@@ -10,6 +10,8 @@ paths:
     post:
       summary: Add a new task
       operationId: createTask
+      tags:
+        - "Tasks"
       requestBody:
         required: true
         content:
@@ -35,6 +37,8 @@ paths:
     post:
       summary: Send a message for a task
       operationId: sendMessage
+      tags:
+        - "Messages"
       parameters:
         - name: taskId
           in: path
@@ -67,6 +71,8 @@ paths:
     get:
       summary: Get task status and messages
       operationId: getTask
+      tags:
+        - "Tasks"
       parameters:
         - name: taskId
           in: path
@@ -92,6 +98,30 @@ paths:
                     type: array
                     items:
                       type: string
+  /hosts:
+    post:
+      summary: Add a new host
+      operationId: createHost
+      tags:
+        - "Hosts"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HostModel'
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  host_id:
+                    type: string
+                    format: uuid
+
 
 components:
   schemas:
@@ -120,3 +150,19 @@ components:
         - hostDescription
         - host
         - supervised
+
+    HostModel:
+      type: object
+      properties:
+        host_id:
+          type: string
+        host_name:
+          type: string
+        ip:
+          type: string
+        username:
+          type: string
+        private_key:
+          type: string
+        public_key:
+          type: string

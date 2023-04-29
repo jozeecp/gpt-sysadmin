@@ -1,12 +1,18 @@
 """Backend API for the task manager"""
+import logging
 import os
 import sys
 from uuid import uuid4
 
 from flask import Flask, jsonify, request
+from functions.hosts.post.handler import handler as host_post_handler
+from functions.tasks.post.handler import handler as task_post_handler
+from models.host import Host
+from models.task import Task
 
-from app.backend.functions.tasks.post.handler import handler as task_post_handler
-from app.backend.models.task import Task
+# Set up logging
+logger = logging.getLogger()
+logger.setLevel(logging.DEBUG)
 
 # Add the directory containing this script to the Python path
 script_dir = os.path.dirname(os.path.realpath(__file__))
@@ -70,12 +76,39 @@ def get_task(task_id):
     return jsonify(response), 200
 
 
-@app.route("v1/hosts", methods=["POST"])
+@app.route("/v1/hosts", methods=["POST"])
 def create_host():
     """Create a new host"""
 
+    host_data = request.json
 
-@app.route("v1/hosts/<string:host_id>", methods=["GET"])
+    logger.info("Creating host...")
+    logger.debug("Received host data: %s", host_data)
+
+    host_id = str(uuid4())
+    host = Host(
+        **{
+            "host_id": host_id,
+            "host_name": host_data["host_name"],
+            "ip": host_data["ip"],
+            "username": host_data.get("username", "root"),
+            "private_key": host_data["private_key"],
+            "public_key": host_data["public_key"],
+        }
+    )
+
+    try:
+        new_host = host_post_handler(host)
+    except Exception as e:
+        logger.error("Error creating host: %s", e)
+        return jsonify({"error": "Error creating host"}), 500
+    logger.info("Host created successfully")
+    logger.debug("Host created: %s", new_host.dict())
+
+    return jsonify({"host_id": host_id}), 201
+
+
+@app.route("/v1/hosts/<string:host_id>", methods=["GET"])
 def get_host(host_id):
     """Get a host"""
 
@@ -83,4 +116,4 @@ def get_host(host_id):
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True)
