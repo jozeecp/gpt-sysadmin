@@ -1,9 +1,9 @@
 """Host service"""
-import os
 import logging
+import os
 
-from models.host import Host
 from libs.base_service import BaseService
+from models.host import Host
 
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)

@@ -1,15 +1,14 @@
 """Backend API for the task manager"""
-import os
 import logging
+import os
 import sys
 from uuid import uuid4
 
 from flask import Flask, jsonify, request
-
-from functions.tasks.post.handler import handler as task_post_handler
 from functions.hosts.post.handler import handler as host_post_handler
-from models.task import Task
+from functions.tasks.post.handler import handler as task_post_handler
 from models.host import Host
+from models.task import Task
 
 # Set up logging
 logger = logging.getLogger()

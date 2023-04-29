@@ -1,8 +1,9 @@
 """Function to handle host creation"""
 from typing import Any
 
-from models.host import Host
 from libs.host_service import HostService
+from models.host import Host
+
 
 def handler(host: Host) -> Any:
     """Handle host creation"""

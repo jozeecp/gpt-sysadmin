@@ -1,3 +1,4 @@
+"""Host model"""
 from pydantic import BaseModel
 
 

@@ -10,7 +10,6 @@ import os
 from typing import Any, Dict, List
 
 import openai
-
 from libs.base_service import BaseService
 from libs.task_service import MessageService
 from models.open_ai_resp import OpenAIResponse

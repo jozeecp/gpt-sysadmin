@@ -5,7 +5,6 @@ from contextlib import contextmanager
 from unittest.mock import MagicMock
 
 import paramiko
-
 from libs.base_service import BaseService
 from models.task import Task
 
