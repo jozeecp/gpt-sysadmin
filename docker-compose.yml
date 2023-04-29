@@ -1,0 +1,44 @@
+# containers:
+#  - backend (stateless, Python)
+#  - frontend (stateless, Node.js)
+#  - database (stateful/persistent storage, redis)
+#  - test_host (stateless)
+
+version: '3.8'
+
+services:
+  backend:
+    build: ./app/backend
+    ports:
+      - "5000:5000"
+    depends_on:
+      - redis
+    env_file:
+      - test.env
+
+  frontend:
+    build: ./app/frontend
+    ports:
+      - "3000:3000"
+    env_file:
+      - test.env
+
+  redis:
+    build: ./app/redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    env_file:
+      - test.env
+
+  test_host:
+    build: ./app/test_host
+    depends_on:
+      - backend
+      - frontend
+    env_file:
+      - test.env
+
+volumes:
+  redis-data:

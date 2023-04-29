@@ -6,8 +6,8 @@ from unittest.mock import MagicMock
 
 import paramiko
 
-from app.backend.libs.base_service import BaseService
-from app.backend.models.task import Task
+from libs.base_service import BaseService
+from models.task import Task
 
 redis_db = os.environ.get("PARAMIKO_REDIS_DB")
 password = os.environ.get("SSH_PASSWORD")
