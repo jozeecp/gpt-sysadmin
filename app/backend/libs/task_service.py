@@ -52,7 +52,7 @@ class TaskService(BaseService):
         """Create a new task"""
 
         # render jinja2 template to get prompt
-        with open("./app/backend/templates/prompt.jinja2", encoding="utf-8") as f:
+        with open("./templates/prompt.jinja2", encoding="utf-8") as f:
             template = Template(f.read())
             f.close()
         prompt = template.render(task=task.dict())
