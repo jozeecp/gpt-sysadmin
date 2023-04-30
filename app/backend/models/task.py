@@ -49,6 +49,7 @@ class EngineEnum(str, Enum):
 class StatusEnum(str, Enum):
     """Status enum"""
 
+    PENDING = "pending"
     RUNNING = "running"
     COMPLETED = "completed"
     FAILED = "failed"

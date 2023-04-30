@@ -27,21 +27,23 @@ def create_task():
     """Create a new task"""
     task_data = request.json
 
-    task_id = str(uuid4())
-    task = Task(
-        **{
-            "taskId": task_id,
-            "status": "pending",
-            "taskDescription": task_data["taskDescription"],
-            "hostDescription": task_data["hostDescription"],
-            "host": task_data["host"],
-            "user": task_data.get("user", "root"),
-            "supervised": task_data["supervised"],
-            "messages": [],
-        }
-    )
+    logger.info("Creating task...")
+    logger.debug("Received task data: %s", task_data)
 
-    new_task = task_post_handler(task)
+    task_id = str(uuid4())
+    logger.debug("Task ID: %s", task_id)
+    task_data["taskId"] = task_id
+    task_data["status"] = "pending"
+    task = Task(**task_data)
+
+    try:
+        new_task = task_post_handler(task)
+    except Exception as e:
+        logger.error("Error creating task: %s", e)
+        return jsonify({"error": "Error creating task"}), 500
+
+    logger.info("Task created successfully")
+    logger.debug("Task created: %s", new_task.dict())
 
     response = {"task": new_task.dict()}
     return jsonify(response), 201
@@ -86,16 +88,9 @@ def create_host():
     logger.debug("Received host data: %s", host_data)
 
     host_id = str(uuid4())
-    host = Host(
-        **{
-            "host_id": host_id,
-            "host_name": host_data["host_name"],
-            "ip": host_data["ip"],
-            "username": host_data.get("username", "root"),
-            "private_key": host_data["private_key"],
-            "public_key": host_data["public_key"],
-        }
-    )
+    logger.debug("Host ID: %s", host_id)
+    host_data["host_id"] = host_id
+    host = Host(**host_data)
 
     try:
         new_host = host_post_handler(host)
