@@ -15,13 +15,16 @@ services:
       - redis
     env_file:
       - test.env
+    volumes:
+      - ./test_idrsa_key:/root/.ssh/id_rsa  # Bind mount the SSH key
+      - ./test_idrsa_key.pub:/root/.ssh/id_rsa.pub  # Bind mount the SSH key
 
-  frontend:
-    build: ./app/frontend
-    ports:
-      - "3000:3000"
-    env_file:
-      - test.env
+  # frontend:
+  #   build: ./app/frontend
+  #   ports:
+  #     - "3000:3000"
+  #   env_file:
+  #     - test.env
 
   redis:
     build: ./app/redis
@@ -33,12 +36,18 @@ services:
       - test.env
 
   test_host:
-    build: ./app/test_host
+    # build: ./app/test_host
+    build:
+      context: ./app/test_host
+      args:
+        PUBLIC_KEY: ${PUBLIC_KEY}  # Pass the public key as a build argument
     depends_on:
       - backend
-      - frontend
+      # - frontend
     env_file:
       - test.env
+    # volumes:
+    #   - ./test_idrsa_key.pub:/backend_idrsa_key.pub  # Bind mount the SSH key
 
 volumes:
   redis-data:

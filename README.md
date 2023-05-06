@@ -5,6 +5,7 @@ gpt-sysadmin can SSH into host and autonomously execute intructions
 ## Deployment (Local)
 
 ```bash
+export PUBLIC_KEY="$(cat ./test-key.pub)"
 docker-compose build
 docker-compose up
 ```
@@ -33,12 +34,17 @@ curl -X POST http://localhost:5000/v1/tasks \
      -d '{
            "engine": "gpt-3.5-turbo",
            "taskDescription": "Example task description",
-           "hostDescription": "Example host description",
-           "host": "example.com",
+           "host": "<UUID>",
            "user": "example_user",
            "supervised": true,
            "engine": "gpt-3.5-turbo"
          }'
+```
+
+### v1/hosts/{host_id} - GET
+
+```bash
+curl -X GET "http://localhost/v1/hosts/{host_id}"
 ```
 
 ### v1/hosts/ - POST
@@ -47,10 +53,9 @@ curl -X POST http://localhost:5000/v1/tasks \
 curl -X POST http://localhost:5000/v1/hosts \
      -H "Content-Type: application/json" \
      -d '{
-           "host_name": "example-host",
-           "ip": "192.168.1.100",
-           "username": "example_user",
-           "private_key": "example-private-key",
-           "public_key": "example-public-key"
+           "hostname": "example-host",
+           "description": "Ubuntu running on docker container",
+           "username": "root",
+           "password": "PASSWORD"
          }'
 ```

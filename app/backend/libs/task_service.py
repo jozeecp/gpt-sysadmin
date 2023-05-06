@@ -5,6 +5,7 @@ from jinja2 import Template
 
 # import jinja2
 from libs.base_service import BaseService
+from libs.host_service import HostService
 from libs.parser_factory import ParserFactory
 from models.task import Message, ParsedMessage, SystemMessage, Task
 
@@ -17,7 +18,7 @@ class MessageService(BaseService):
     def __init__(self):
         super().__init__(redis_db=redis_db)
 
-    def add_message(self, task: Task, message: Message):
+    def add_message(self, task: Task, message: Message) -> Task:
         """Add a message to a task"""
 
         # parse message
@@ -51,14 +52,19 @@ class TaskService(BaseService):
     def create_task(self, task: Task) -> Task:
         """Create a new task"""
 
-        # render jinja2 template to get prompt
-        with open("./templates/prompt.jinja2", encoding="utf-8") as f:
+        # render jinja2 template to get system prompt
+        with open("./templates/sys_prompt.jinja2", encoding="utf-8") as f:
             template = Template(f.read())
             f.close()
-        prompt = template.render(task=task.dict())
+        sys_prompt = template.render(task=task.dict())
 
-        # initialize first message
-        task.messages.append(SystemMessage(prompt=prompt))
+        # add first message (system prompt)
+        task.messages.append(SystemMessage(prompt=sys_prompt))
+
+        # add host to task
+        host_service = HostService()
+        host = host_service.get_host(task.hostId)
+        task.host = host
 
         # register task in redis
         self.redis_client.set(task.taskId, task.json())
@@ -69,6 +75,7 @@ class TaskService(BaseService):
         """Get a task"""
 
         # get task from redis
-        task = self.redis_client.get(task_id)
+        task_json = self.redis_client.get(task_id)
+        task = Task(**task_json)
 
         return task

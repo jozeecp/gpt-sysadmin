@@ -1,18 +1,18 @@
 """Backend API for the task manager"""
-import logging
 import os
 import sys
 from uuid import uuid4
 
 from flask import Flask, jsonify, request
+from functions.hosts.get.handler import handler as host_get_handler
 from functions.hosts.post.handler import handler as host_post_handler
 from functions.tasks.post.handler import handler as task_post_handler
-from models.host import Host
+from libs.utils import LoggingService
+from models.host import HostCreate
 from models.task import Task
 
 # Set up logging
-logger = logging.getLogger()
-logger.setLevel(logging.DEBUG)
+logger = LoggingService.get_logger(__name__)
 
 # Add the directory containing this script to the Python path
 script_dir = os.path.dirname(os.path.realpath(__file__))
@@ -66,16 +66,18 @@ def send_message(task_id):
 def get_task(task_id):
     """Get a task"""
 
-    if task_id not in tasks:
-        return jsonify({"error": "Task not found"}), 404
+    logger.debug("Getting task %s", task_id)
 
-    task = tasks[task_id]
-    response = {
-        "taskId": task["taskId"],
-        "status": task["status"],
-        "messages": task["messages"],
-    }
-    return jsonify(response), 200
+    # if task_id not in tasks:
+    #     return jsonify({"error": "Task not found"}), 404
+
+    # task = tasks[task_id]
+    # response = {
+    #     "taskId": task["taskId"],
+    #     "status": task["status"],
+    #     "messages": task["messages"],
+    # }
+    # return jsonify(response), 200
 
 
 @app.route("/v1/hosts", methods=["POST"])
@@ -90,7 +92,8 @@ def create_host():
     host_id = str(uuid4())
     logger.debug("Host ID: %s", host_id)
     host_data["host_id"] = host_id
-    host = Host(**host_data)
+    host = HostCreate(**host_data)
+    logger.debug("Host create data: %s", host.dict())
 
     try:
         new_host = host_post_handler(host)
@@ -107,7 +110,9 @@ def create_host():
 def get_host(host_id):
     """Get a host"""
 
-    print(host_id)
+    host = host_get_handler(host_id)
+
+    return jsonify(host.dict()), 200
 
 
 if __name__ == "__main__":

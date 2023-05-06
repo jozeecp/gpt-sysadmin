@@ -156,7 +156,7 @@ components:
       properties:
         host_id:
           type: string
-        host_name:
+        hostname:
           type: string
         ip:
           type: string

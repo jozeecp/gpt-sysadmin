@@ -2,11 +2,17 @@
 from typing import Any
 
 from libs.host_service import HostService
-from models.host import Host
+from libs.utils import LoggingService
+from models.host import HostCreate
+
+logger = LoggingService.get_logger(__name__)
 
 
-def handler(host: Host) -> Any:
+def handler(host: HostCreate) -> Any:
     """Handle host creation"""
+
+    logger.info("Creating host...")
+    logger.debug("Received host data: %s", host)
 
     host_service = HostService()
 
