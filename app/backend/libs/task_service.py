@@ -18,7 +18,7 @@ class MessageService(BaseService):
     def __init__(self):
         super().__init__(redis_db=redis_db)
 
-    def add_message(self, task: Task, message: Message) ->Task:
+    def add_message(self, task: Task, message: Message) -> Task:
         """Add a message to a task"""
 
         # parse message

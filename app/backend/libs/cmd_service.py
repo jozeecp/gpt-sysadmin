@@ -1,17 +1,13 @@
 """Command service."""
+import io
 import os
 from contextlib import contextmanager
 from os.path import exists
-from typing import Union
-import io
 
 import paramiko
-from cryptography.hazmat.primitives import serialization
-from cryptography.hazmat.primitives.serialization import ssh
-from cryptography.hazmat.backends import default_backend
 from libs.base_service import BaseService
 from libs.utils import LoggingService
-from models.host import Host, HostCreate
+from models.host import HostCreate
 from models.task import Task
 
 logger = LoggingService.get_logger(__name__)

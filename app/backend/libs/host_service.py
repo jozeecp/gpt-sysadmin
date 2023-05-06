@@ -1,14 +1,11 @@
 """Host service"""
 import json
 import os
-from uuid import uuid4
 
 from libs.base_service import BaseService
-from libs.secrets_service import SecretsService
 from libs.cmd_service import CmdService
 from libs.utils import LoggingService
 from models.host import Host, HostCreate
-
 
 logger = LoggingService.get_logger(__name__)
 
@@ -30,7 +27,9 @@ class HostService(BaseService):
         if not test_result:
             # could not connect to host, will register key with password
             try:
-                logger.debug("Could not connect to host, registering key with password...")
+                logger.debug(
+                    "Could not connect to host, registering key with password..."
+                )
                 CmdService.register_ssh_key(host_create)
             except Exception as e:
                 logger.error("Error registering key with password: %s", e)

@@ -7,7 +7,6 @@ from pydantic import BaseModel
 class HostBase(BaseModel):
     """Base host model"""
 
-
     host_id: str
     hostname: str
     description: str

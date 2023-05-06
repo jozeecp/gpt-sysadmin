@@ -20,7 +20,7 @@ class LoggingService:
         stream_handler = logging.StreamHandler(sys.stdout)
 
         # Set the log format
-        formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+        formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
         stream_handler.setFormatter(formatter)
 
         # Add the stream handler to the logger

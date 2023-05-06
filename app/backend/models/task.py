@@ -63,7 +63,7 @@ class Task(BaseModel):
     engine: EngineEnum
     status: StatusEnum
     taskDescription: str
-    hostId: str ## uuid of host
+    hostId: str  ## uuid of host
     host: Optional[Host]
     supervised: bool
     messages: List[Message] = []  # CHECK_HERE if you have an empty list unintentionally

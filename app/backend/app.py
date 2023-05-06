@@ -1,5 +1,4 @@
 """Backend API for the task manager"""
-import logging
 import os
 import sys
 from uuid import uuid4
@@ -9,7 +8,7 @@ from functions.hosts.get.handler import handler as host_get_handler
 from functions.hosts.post.handler import handler as host_post_handler
 from functions.tasks.post.handler import handler as task_post_handler
 from libs.utils import LoggingService
-from models.host import Host, HostCreate
+from models.host import HostCreate
 from models.task import Task
 
 # Set up logging
@@ -66,6 +65,8 @@ def send_message(task_id):
 @app.route("/v1/tasks/<string:task_id>", methods=["GET"])
 def get_task(task_id):
     """Get a task"""
+
+    logger.debug("Getting task %s", task_id)
 
     # if task_id not in tasks:
     #     return jsonify({"error": "Task not found"}), 404

@@ -1,7 +1,6 @@
 """Task creation handler"""
 from libs.cmd_service import CmdService
 from libs.generative_cmd_service import GenerativeCmdService
-from libs.host_service import HostService
 from libs.task_service import MessageService, TaskService
 from libs.utils import LoggingService
 from models.task import HostMessage, Task
@@ -14,7 +13,6 @@ def handler(task_old: Task) -> Task:
 
     task_service = TaskService()
     message_service = MessageService()
-    host_service = HostService()
 
     # create task
     logger.debug("task_old: %s", task_old)
