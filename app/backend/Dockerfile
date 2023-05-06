@@ -10,6 +10,15 @@ COPY requirements.txt .
 # Install the dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Install openssh-server
+RUN apt-get update && \
+    apt-get install -y openssh-server && \
+    apt-get clean
+
+# chmod the /root/.ssh/ directory
+RUN mkdir -p /root/.ssh/ && \
+    chmod 700 /root/.ssh/
+
 # Copy the Flask app into the container
 COPY . .
 

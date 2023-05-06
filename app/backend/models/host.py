@@ -1,14 +1,25 @@
 """Host model"""
+from typing import Optional
+
 from pydantic import BaseModel
 
 
-class Host(BaseModel):
-    """Host model"""
+class HostBase(BaseModel):
+    """Base host model"""
+
 
     host_id: str
-    host_name: str
-    ip: str
+    hostname: str
+    description: str
+    ip: Optional[str]
+    username: str = "root"
 
-    username: str
-    private_key: str
-    public_key: str
+
+class HostCreate(HostBase):
+    """Host creation model"""
+
+    password: Optional[str]
+
+
+class Host(HostBase):
+    """Host model"""
