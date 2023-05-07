@@ -1,5 +1,5 @@
 # Use the official Python 3.10 image as the base image
-FROM python:3.10
+FROM python:3.10-slim
 
 # Set the working directory
 WORKDIR /app
@@ -13,7 +13,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Install openssh-server
 RUN apt-get update && \
     apt-get install -y openssh-server && \
-    apt-get clean
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 # chmod the /root/.ssh/ directory
 RUN mkdir -p /root/.ssh/ && \
