@@ -41,7 +41,7 @@ class GenerativeCmdService(BaseService):
             model=task.engine,
             messages=message_list,
             temperature=0,
-            max_tokens=8000,
+            # max_tokens=8000,
         )
 
         gpt_msg = self.parse_openai_response(response)

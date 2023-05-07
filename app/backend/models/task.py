@@ -1,6 +1,6 @@
 """Task models"""
 from enum import Enum
-from typing import List, Optional
+from typing import List, Optional, Union
 
 from models.host import Host
 from pydantic import BaseModel
@@ -63,8 +63,8 @@ class Task(BaseModel):
     engine: EngineEnum
     status: StatusEnum
     taskDescription: str
-    hostId: str  ## uuid of host
+    host_id: str  ## uuid of host
     host: Optional[Host]
     supervised: bool
-    messages: List[Message] = []  # CHECK_HERE if you have an empty list unintentionally
+    messages: List[Union[GPTMessage, HostMessage, SystemMessage]] = []
     parsedMessages: List[ParsedMessage] = []

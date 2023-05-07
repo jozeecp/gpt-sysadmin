@@ -1,4 +1,5 @@
 """Task service"""
+import json
 import os
 
 from jinja2 import Template
@@ -7,9 +8,12 @@ from jinja2 import Template
 from libs.base_service import BaseService
 from libs.host_service import HostService
 from libs.parser_factory import ParserFactory
+from libs.utils import LoggingService
 from models.task import Message, ParsedMessage, SystemMessage, Task
 
 redis_db = os.environ.get("TASK_REDIS_DB")
+
+logger = LoggingService.get_logger(__name__)
 
 
 class MessageService(BaseService):
@@ -21,15 +25,22 @@ class MessageService(BaseService):
     def add_message(self, task: Task, message: Message) -> Task:
         """Add a message to a task"""
 
+        logger.debug("In add_message()...")
+
         # parse message
         parsed_msg = self.parse_message(message)
+        logger.debug("parsed_msg: %s", parsed_msg)
 
         # add message to task
         task.messages.append(message)
+        logger.debug("task: %s", task)
 
         # update task in redis
-        self.redis_client.set(task.taskId, task.json())
+        task_json = json.dumps(task.dict())
+        logger.debug("task_json: %s", task_json)
+        self.redis_client.set(task.taskId, task_json)
 
+        logger.debug("returning from add_message()")
         return parsed_msg
 
     @staticmethod
@@ -52,19 +63,28 @@ class TaskService(BaseService):
     def create_task(self, task: Task) -> Task:
         """Create a new task"""
 
+        # logger.debug("returning early from task service")
+        # return task
+
         # render jinja2 template to get system prompt
+        logger.debug("rendering jinja2 template to get system prompt")
         with open("./templates/sys_prompt.jinja2", encoding="utf-8") as f:
             template = Template(f.read())
             f.close()
         sys_prompt = template.render(task=task.dict())
+        logger.debug(f"sys_prompt: {sys_prompt}")
 
         # add first message (system prompt)
+        logger.debug("adding first message (system prompt)")
         task.messages.append(SystemMessage(prompt=sys_prompt))
+        logger.debug(f"task.messages: {task.messages}")
 
         # add host to task
+        logger.debug("adding host to task")
         host_service = HostService()
-        host = host_service.get_host(task.hostId)
+        host = host_service.get_host(task.host_id)
         task.host = host
+        logger.debug(f"task.host: {task.host}")
 
         # register task in redis
         self.redis_client.set(task.taskId, task.json())
@@ -76,6 +96,10 @@ class TaskService(BaseService):
 
         # get task from redis
         task_json = self.redis_client.get(task_id)
-        task = Task(**task_json)
+        logger.debug(f"task_json[get_task()]: {str(task_json)}")
+        task_dict = json.loads(task_json)
+        logger.debug(f"task_dict[get_task()]: {task_dict}")
+        task = Task(**task_dict)
+        logger.debug(f"task[get_task()]: {task}")
 
         return task

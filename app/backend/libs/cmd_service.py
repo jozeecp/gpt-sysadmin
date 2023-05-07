@@ -8,7 +8,7 @@ import paramiko
 from libs.base_service import BaseService
 from libs.utils import LoggingService
 from models.host import HostCreate
-from models.task import Task
+from models.task import Message, Task
 
 logger = LoggingService.get_logger(__name__)
 
@@ -24,10 +24,11 @@ class CmdService(BaseService):
         self.task = task
         self.redis_client = redis_client or self.redis_client
 
-    def execute_command(self, command: str) -> str:
+    def execute_command(self, command: Message) -> str:
         """Execute a command."""
+        cmd = command.machine_msg
         with self.ssh_connection(self.task) as client:
-            return self._exec_command(client, command)
+            return self._exec_command(client, cmd)
 
     def _exec_command(self, client, command):
         """Execute a command."""
@@ -55,8 +56,8 @@ class CmdService(BaseService):
             private_key = paramiko.RSAKey.from_private_key(keyfile)
 
         ssh_client.connect(
-            hostname=task.host,
-            username=task.user,
+            hostname=task.host.hostname,
+            username=task.host.username,
             pkey=private_key,
         )
         try:
