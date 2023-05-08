@@ -19,12 +19,12 @@ services:
       - ./test_idrsa_key:/root/.ssh/id_rsa  # Bind mount the SSH key
       - ./test_idrsa_key.pub:/root/.ssh/id_rsa.pub  # Bind mount the SSH key
 
-  # frontend:
-  #   build: ./app/frontend
-  #   ports:
-  #     - "3000:3000"
-  #   env_file:
-  #     - test.env
+  frontend:
+    build: ./app/frontend
+    ports:
+      - "80:80"
+    env_file:
+      - test.env
 
   redis:
     build: ./app/redis
