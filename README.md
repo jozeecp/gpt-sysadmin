@@ -34,8 +34,8 @@ curl -X POST http://localhost:5000/v1/tasks \
      -d '{
            "engine": "gpt-3.5-turbo",
            "taskDescription": "Example task description",
-           "host": "<UUID>",
-           "user": "example_user",
+           "host": "13e378c7-2ee6-4fef-bf1b-1893c97beb3e",
+           "user": "root",
            "supervised": true,
            "engine": "gpt-3.5-turbo"
          }'

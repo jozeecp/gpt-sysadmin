@@ -1,0 +1,13 @@
+.background {
+    background-color: #3c3c47;
+}
+
+.xterm {
+    background-color: #1c1f2b;
+}
+
+.terminal-container {
+    width: 100%;
+    height: 300px;
+    border: 1px solid #ccc;
+}

@@ -135,11 +135,9 @@ components:
             - gpt-4
         taskDescription:
           type: string
-        hostDescription:
+        host_id:
           type: string
-        host:
-          type: string
-          description: hostname or IPV4
+          description: UUID of host
         user:
           type: string
           description: defaults to root if not given
@@ -147,8 +145,7 @@ components:
           type: boolean
       required:
         - taskDescription
-        - hostDescription
-        - host
+        - host_id
         - supervised
 
     HostModel:
