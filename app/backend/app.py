@@ -7,11 +7,14 @@ from flask import Flask, jsonify, request
 from functions.hosts.get.handler import handler as host_get_handler
 from functions.hosts.post.handler import handler as host_post_handler
 from functions.tasks.post.handler import handler as task_post_handler
-from functions.tasks.task_id.messages.post.handler import handler as task_id_messages_post_handler
 from functions.tasks.task_id.get.handler import handler as task_id_get_handler
+from functions.tasks.task_id.messages.post.handler import (
+    handler as task_id_messages_post_handler,
+)
 from libs.utils import LoggingService
 from models.host import HostCreate
-from models.task import Task, HostMessage
+from models.task import HostMessage, Task
+
 from app.backend.models.task import GPTMessage
 
 # Set up logging

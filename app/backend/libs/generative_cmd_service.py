@@ -12,9 +12,9 @@ from typing import Any, Dict, List
 import openai
 from libs.base_service import BaseService
 from libs.task_service import MessageService
+from libs.utils import LoggingService
 from models.open_ai_resp import OpenAIResponse
 from models.task import GPTMessage, ParsedMessage, Task
-from libs.utils import LoggingService
 
 logger = LoggingService.get_logger(__name__)
 

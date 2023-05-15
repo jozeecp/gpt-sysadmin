@@ -1,3 +1,5 @@
+"""task_id GET handler"""
+
 from libs.task_service import TaskService
 from models.task import Task
 
