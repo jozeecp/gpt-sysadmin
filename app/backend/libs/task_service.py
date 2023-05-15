@@ -41,7 +41,7 @@ class MessageService(BaseService):
         self.redis_client.set(task.taskId, task_json)
 
         logger.debug("returning from add_message()")
-        return parsed_msg
+        return task
 
     @staticmethod
     def parse_message(message: Message) -> ParsedMessage:

@@ -7,9 +7,12 @@ from flask import Flask, jsonify, request
 from functions.hosts.get.handler import handler as host_get_handler
 from functions.hosts.post.handler import handler as host_post_handler
 from functions.tasks.post.handler import handler as task_post_handler
+from functions.tasks.task_id.messages.post.handler import handler as task_id_messages_post_handler
+from functions.tasks.task_id.get.handler import handler as task_id_get_handler
 from libs.utils import LoggingService
 from models.host import HostCreate
-from models.task import Task
+from models.task import Task, HostMessage
+from app.backend.models.task import GPTMessage
 
 # Set up logging
 logger = LoggingService.get_logger(__name__)
@@ -53,31 +56,24 @@ def create_task():
 def send_message(task_id):
     """Send a message to a task"""
 
-    message = request.json.get("message")
+    machine_msg = request.json.get("machine_msg")
 
-    if task_id not in tasks:
-        return jsonify({"error": "Task not found"}), 404
+    msg = HostMessage(machine_msg=machine_msg)
 
-    tasks[task_id]["messages"].append(message)
-    return jsonify({"status": "success"}), 201
+    new_task = task_id_messages_post_handler(msg, task_id)
+
+    new_gpt_msg: GPTMessage = new_task.messages[-1]
+    return jsonify(new_gpt_msg.dict()), 201
 
 
 @app.route("/v1/tasks/<string:task_id>", methods=["GET"])
 def get_task(task_id):
     """Get a task"""
 
-    logger.debug("Getting task %s", task_id)
+    logger.debug("Getting task: %s", task_id)
 
-    # if task_id not in tasks:
-    #     return jsonify({"error": "Task not found"}), 404
-
-    # task = tasks[task_id]
-    # response = {
-    #     "taskId": task["taskId"],
-    #     "status": task["status"],
-    #     "messages": task["messages"],
-    # }
-    # return jsonify(response), 200
+    task = task_id_get_handler(task_id)
+    return jsonify(task.dict()), 200
 
 
 @app.route("/v1/hosts", methods=["POST"])
