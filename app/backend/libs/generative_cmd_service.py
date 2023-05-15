@@ -12,8 +12,11 @@ from typing import Any, Dict, List
 import openai
 from libs.base_service import BaseService
 from libs.task_service import MessageService
+from libs.utils import LoggingService
 from models.open_ai_resp import OpenAIResponse
 from models.task import GPTMessage, ParsedMessage, Task
+
+logger = LoggingService.get_logger(__name__)
 
 # OpenAI API key
 api_key = os.environ.get("OPENAI_API_KEY")
@@ -23,8 +26,7 @@ redis_db = os.environ.get("TASK_REDIS_DB")
 
 
 class GenerativeCmdService(BaseService):
-    """Generative command service
-    FIXME: This is a stub. It needs to be implemented."""
+    """Generative command service"""
 
     def __init__(self):
         super().__init__(redis_db=redis_db)
@@ -32,19 +34,22 @@ class GenerativeCmdService(BaseService):
     def generate_cmd(self, task: Task) -> GPTMessage:
         """Generate a command"""
 
+        logger.debug("In generate_cmd()...")
         # parse message list
         message_list = self.parse_message_list(task)
+        logger.debug("message_list: %s", message_list)
 
         # use openai library to generate command
+        logger.debug("Generating command...")
         openai.api_key = api_key
         response = openai.ChatCompletion.create(
             model=task.engine,
             messages=message_list,
             temperature=0,
-            # max_tokens=8000,
         )
 
         gpt_msg = self.parse_openai_response(response)
+        logger.debug("gpt_msg: %s", gpt_msg)
 
         return gpt_msg
 
