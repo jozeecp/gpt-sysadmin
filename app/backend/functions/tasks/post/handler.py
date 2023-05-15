@@ -1,9 +1,8 @@
 """Task creation handler"""
-from libs.cmd_service import CmdService
 from libs.generative_cmd_service import GenerativeCmdService
 from libs.task_service import MessageService, TaskService
 from libs.utils import LoggingService
-from models.task import HostMessage, Task
+from models.task import Task
 
 logger = LoggingService.get_logger(__name__)
 
@@ -32,6 +31,4 @@ def handler(task_old: Task) -> Task:
     task_final = task_service.get_task(task_new.taskId)
     logger.debug("task_final: %s", task_final)
 
-    # logger.debug("returning early for testing")
-    # return task_new
     return task_final

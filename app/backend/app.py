@@ -14,7 +14,7 @@ from functions.tasks.task_id.messages.post.handler import (
 )
 from libs.utils import LoggingService
 from models.host import HostCreate
-from models.task import HostMessage, Task, GPTMessage
+from models.task import GPTMessage, HostMessage, Task
 
 # Set up logging
 logger = LoggingService.get_logger(__name__)
@@ -23,7 +23,7 @@ logger = LoggingService.get_logger(__name__)
 script_dir = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(script_dir)
 app = Flask(__name__)
-CORS(app, resources={r'*': {'origins': '*'}})
+CORS(app, resources={r"*": {"origins": "*"}})
 
 tasks = {}
 
