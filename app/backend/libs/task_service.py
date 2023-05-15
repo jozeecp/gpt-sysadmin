@@ -66,6 +66,13 @@ class TaskService(BaseService):
         # logger.debug("returning early from task service")
         # return task
 
+        # add host to task
+        logger.debug("adding host to task")
+        host_service = HostService()
+        host = host_service.get_host(task.host_id)
+        task.host = host
+        logger.debug(f"task.host: {task.host}")
+
         # render jinja2 template to get system prompt
         logger.debug("rendering jinja2 template to get system prompt")
         with open("./templates/sys_prompt.jinja2", encoding="utf-8") as f:
@@ -78,13 +85,6 @@ class TaskService(BaseService):
         logger.debug("adding first message (system prompt)")
         task.messages.append(SystemMessage(prompt=sys_prompt))
         logger.debug(f"task.messages: {task.messages}")
-
-        # add host to task
-        logger.debug("adding host to task")
-        host_service = HostService()
-        host = host_service.get_host(task.host_id)
-        task.host = host
-        logger.debug(f"task.host: {task.host}")
 
         # register task in redis
         self.redis_client.set(task.taskId, task.json())
@@ -101,5 +101,15 @@ class TaskService(BaseService):
         logger.debug(f"task_dict[get_task()]: {task_dict}")
         task = Task(**task_dict)
         logger.debug(f"task[get_task()]: {task}")
+
+        return task
+
+    def update_task(self, task: Task) -> Task:
+        """Update a task"""
+
+        # update task in redis
+        task_json = json.dumps(task.dict())
+        logger.debug(f"task_json[update_task()]: {task_json}")
+        self.redis_client.set(task.taskId, task_json)
 
         return task

@@ -9,6 +9,8 @@ from functions.hosts.get.handler import handler as host_get_handler
 from functions.hosts.post.handler import handler as host_post_handler
 from functions.tasks.post.handler import handler as task_post_handler
 from functions.tasks.task_id.get.handler import handler as task_id_get_handler
+from functions.tasks.task_id.put.handler import handler as task_id_put_handler
+from functions.tasks.task_id.confirm.handler import handler as task_id_confirm_handler
 from functions.tasks.task_id.messages.post.handler import (
     handler as task_id_messages_post_handler,
 )
@@ -55,18 +57,18 @@ def create_task():
     return jsonify(response), 201
 
 
-@app.route("/v1/tasks/<string:task_id>/messages", methods=["POST"])
-def send_message(task_id):
-    """Send a message to a task"""
+# @app.route("/v1/tasks/<string:task_id>/messages/machine_messages", methods=["POST"])
+# def send_message(task_id):
+#     """Send a message to a task"""
 
-    machine_msg = request.json.get("machine_msg")
+#     machine_msg = request.json.get("machine_msg")
 
-    msg = HostMessage(machine_msg=machine_msg)
+#     msg = HostMessage(machine_msg=machine_msg)
 
-    new_task = task_id_messages_post_handler(msg, task_id)
+#     new_task = task_id_messages_post_handler(msg, task_id)
 
-    new_gpt_msg: GPTMessage = new_task.messages[-1]
-    return jsonify(new_gpt_msg.dict()), 201
+#     new_gpt_msg: GPTMessage = new_task.messages[-1]
+#     return jsonify(new_gpt_msg.dict()), 201
 
 
 @app.route("/v1/tasks/<string:task_id>", methods=["GET"])
@@ -77,6 +79,36 @@ def get_task(task_id):
 
     task = task_id_get_handler(task_id)
     return jsonify(task.dict()), 200
+
+
+@app.route("/v1/tasks/<string:task_id>", methods=["PUT"])
+def modify_task(task_id):
+    """Modify a task"""
+
+    logger.debug("Getting task: %s", task_id)
+    request_data = request.json
+    logger.debug("Request data: %s", request_data)
+
+    try:
+        task = task_id_put_handler(request_data)
+    except Exception as e:
+        logger.error("Error modifying task: %s", e)
+        return jsonify({"error": "Error modifying task"}), 500
+
+    return jsonify(task.dict()), 200
+
+
+@app.route("/v1/tasks/<string:task_id>/confirm", methods=["POST"])
+def confirm_next_step(task_id):
+    """Go to the next step in a task"""
+
+    logger.debug("Getting task: %s", task_id)
+    try:
+        task = task_id_confirm_handler(task_id)
+    except Exception as e:
+        logger.error("Error confirming task: %s", e)
+        return jsonify({"error": f"Error confirming task: {e}"}), 500
+    return jsonify({"task": task.dict()}), 200
 
 
 @app.route("/v1/hosts", methods=["POST"])

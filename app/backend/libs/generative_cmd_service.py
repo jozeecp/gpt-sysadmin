@@ -5,9 +5,11 @@ This service is responsible for generating commands based on the current state o
 Utilizes the OpenAI API to generate commands.
 """
 
+import ast
 import json
 import os
 from typing import Any, Dict, List
+from json.decoder import JSONDecodeError
 
 import openai
 from libs.base_service import BaseService
@@ -47,6 +49,7 @@ class GenerativeCmdService(BaseService):
             messages=message_list,
             temperature=0,
         )
+        logger.debug("OpenAI response: %s", response)
 
         gpt_msg = self.parse_openai_response(response)
         logger.debug("gpt_msg: %s", gpt_msg)
@@ -61,7 +64,13 @@ class GenerativeCmdService(BaseService):
         response_obj = OpenAIResponse(**response)
 
         content = response_obj.choices[0].message.content
-        content_dict = json.loads(content)
+
+        try:
+            # Try to load JSON string as dictionary
+            content_dict = json.loads(content)
+        except JSONDecodeError:
+            # If single-quoted, convert JSON string to dictionary
+            content_dict = ast.literal_eval(content)
 
         gpt_msg = GPTMessage(**content_dict)
 

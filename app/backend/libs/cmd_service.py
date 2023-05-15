@@ -8,7 +8,7 @@ import paramiko
 from libs.base_service import BaseService
 from libs.utils import LoggingService
 from models.host import HostCreate
-from models.task import Message, Task
+from models.task import Message, Task, HostMessage
 
 logger = LoggingService.get_logger(__name__)
 
@@ -24,11 +24,13 @@ class CmdService(BaseService):
         self.task = task
         self.redis_client = redis_client or self.redis_client
 
-    def execute_command(self, command: Message) -> str:
+    def execute_command(self, command: Message) -> HostMessage:
         """Execute a command."""
         cmd = command.machine_msg
         with self.ssh_connection(self.task) as client:
-            return self._exec_command(client, cmd)
+            output =  self._exec_command(client, cmd)
+            parsed_output = self.parse_output(output)
+            return HostMessage(machine_msg=parsed_output)
 
     def _exec_command(self, client, command):
         """Execute a command."""
@@ -58,12 +60,27 @@ class CmdService(BaseService):
         ssh_client.connect(
             hostname=task.host.hostname,
             username=task.host.username,
-            pkey=private_key,
+            # username="root",
+            # pkey=private_key,
+            password="Thanksjose!",
         )
         try:
             yield ssh_client
         finally:
             ssh_client.close()
+
+    @staticmethod
+    def parse_output(output: str) -> str:
+        """Parse output."""
+
+        op_list = output.split("\n")
+        # if longer than 20 lines, only keep the last 20 lines
+        if len(op_list) > 20:
+            op_list = op_list[-20:]
+            # insert ellipsis
+            op_list.insert(0, "...")
+
+        return "\n".join(op_list)
 
     @staticmethod
     def ssh_connection_test(host: HostCreate) -> bool:
