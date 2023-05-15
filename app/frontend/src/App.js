@@ -16,10 +16,16 @@ class App extends React.Component {
         const inputHandler = new Input();
 
         // Listen for input events
-        this.terminal.onData((input) => {
+        this.terminal.onData(async (input) => {
+            const handleInput = async (input) => {
+                // if (input === '\r' || input === '\n') {
+                //     this.terminal.write('\r\nLoading...');
+                // }
+                const output = await inputHandler.handler(input);
+                this.terminal.write(output);
+            };
 
-            const output = inputHandler.handler(input);
-            this.terminal.write(output);
+            await handleInput(input);
         });
     }
 

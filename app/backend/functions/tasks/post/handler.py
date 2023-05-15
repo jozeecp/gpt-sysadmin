@@ -28,18 +28,6 @@ def handler(task_old: Task) -> Task:
     logger.debug("Adding message:", cmd.dict())
     message_service.add_message(task_new, cmd)
 
-    # run command
-    logger.debug("running command...")
-    cmd_service = CmdService(task_new)
-    output = cmd_service.execute_command(cmd)
-    logger.debug("output: %s", output)
-
-    # add host message
-    logger.debug("Adding message...")
-    host_msg = HostMessage(machine_msg=output)
-    message_service.add_message(task_new, host_msg)
-    logger.debug("host_msg: %s", host_msg)
-
     # get latest task object
     task_final = task_service.get_task(task_new.taskId)
     logger.debug("task_final: %s", task_final)

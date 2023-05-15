@@ -4,6 +4,7 @@ import sys
 from uuid import uuid4
 
 from flask import Flask, jsonify, request
+from flask_cors import CORS
 from functions.hosts.get.handler import handler as host_get_handler
 from functions.hosts.post.handler import handler as host_post_handler
 from functions.tasks.post.handler import handler as task_post_handler
@@ -13,9 +14,7 @@ from functions.tasks.task_id.messages.post.handler import (
 )
 from libs.utils import LoggingService
 from models.host import HostCreate
-from models.task import HostMessage, Task
-
-from app.backend.models.task import GPTMessage
+from models.task import HostMessage, Task, GPTMessage
 
 # Set up logging
 logger = LoggingService.get_logger(__name__)
@@ -24,6 +23,7 @@ logger = LoggingService.get_logger(__name__)
 script_dir = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(script_dir)
 app = Flask(__name__)
+CORS(app, resources={r'*': {'origins': '*'}})
 
 tasks = {}
 
