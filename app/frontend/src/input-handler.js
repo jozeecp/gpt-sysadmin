@@ -7,26 +7,29 @@ export class Input {
         this.backend = new Backend();
     }
 
-    handler(input) {
+    async handler(input) {
         // console.log('User input received: ', input);
         var output = `${input}`;
 
         if (input === '\r' || input === '\n') {
-            // console.log('User pressed enter');
-            console.log(this.line);
+            console.log('User pressed enter');
+            console.log('Line: ', this.line);
             if (this.line_count === 0) {
-                // send line to backend
-                let [human_msg, machine_msg] = this.backend.create_task(this.line);
-                output = '\nExplanation: ' + human_msg + '\nassistant@host: ' + machine_msg + '\nuser@host: ';
-            }else {
+                // Send line to backend
+                console.log('Sending line to backend');
+                const [human_msg, machine_msg] = await this.backend.create_task(this.line);
+                console.log("human_msg", human_msg);
+                console.log("machine_msg", machine_msg);
+                output = '\n\rExplanation: ' + human_msg + '\n\rassistant@host: ' + machine_msg;
+            } else {
                 output = `${input}\nuser@host: `;
             }
             this.line = '';
             this.line_count += 1;
-        // check for backspace
+        // Check for backspace
         } else if (input.charCodeAt(0) === 127 || input.charCodeAt(0) === 8) {
             console.log('User pressed backspace');
-            // remove last character from line
+            // Remove last character from line
             this.line = this.line.slice(0, -1);
             output = '\b \b';
         } else {
