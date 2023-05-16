@@ -1,4 +1,4 @@
-import Input from './input-handler';
+import TerminalLib from './input-handler';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Terminal } from 'xterm';
@@ -8,25 +8,8 @@ import './styles.css';
 class App extends React.Component {
     componentDidMount() {
         // Initialize the terminal
-        this.terminal = new Terminal();
-        this.terminal.open(document.getElementById('terminal'));
-        this.terminal.write('Give me a task: ');
-
-        // Create an instance of the Input class
-        const inputHandler = new Input();
-
-        // Listen for input events
-        this.terminal.onData(async (input) => {
-            const handleInput = async (input) => {
-                // if (input === '\r' || input === '\n') {
-                //     this.terminal.write('\r\nLoading...');
-                // }
-                const output = await inputHandler.handler(input);
-                this.terminal.write(output);
-            };
-
-            await handleInput(input);
-        });
+        const terminalHandler = new TerminalLib();
+        terminalHandler.init();
     }
 
     render() {
