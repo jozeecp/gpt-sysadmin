@@ -19,6 +19,5 @@ class HostCreate(HostBase):
     """Host creation model"""
 
 
-
 class Host(HostBase):
     """Host model"""

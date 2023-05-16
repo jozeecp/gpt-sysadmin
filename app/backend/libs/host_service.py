@@ -4,7 +4,6 @@ import os
 from typing import List
 
 from libs.base_service import BaseService
-from libs.cmd_service import CmdService
 from libs.utils import LoggingService
 from models.host import Host, HostCreate
 
