@@ -24,6 +24,14 @@ export class TerminalLib {
 
     async handler(input) {
         if (input=== '\r' || input === '\n') {
+            // if process.env.HOST_ID is not set, tell user to select a host
+            if (global.HOST_ID === undefined) {
+                this.terminal.write('\r\nPlease select a host first!\r\n');
+                return;
+            }
+
+
+            // Enter key pressed
             this.terminal.write('\r\nLoading...');
             // loading animation
             const loading = ['|', '/', '-', '\\'];

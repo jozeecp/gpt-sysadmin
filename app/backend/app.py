@@ -6,6 +6,7 @@ from uuid import uuid4
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from functions.hosts.get.handler import handler as host_get_handler
+from functions.hosts.host_id.get.handler import handler as host_host_id_get_handler
 from functions.hosts.post.handler import handler as host_post_handler
 from functions.tasks.post.handler import handler as task_post_handler
 from functions.tasks.task_id.confirm.handler import handler as task_id_confirm_handler
@@ -134,11 +135,27 @@ def create_host():
     return jsonify({"host_id": host_id}), 201
 
 
+@app.route("/v1/hosts", methods=["GET"])
+def get_hosts():
+    """Get all hosts"""
+
+    logger.debug("Getting all hosts...")
+    try:
+        hosts = host_get_handler()
+        host_dict_list = [host.dict() for host in hosts]
+        logger.debug("Hosts: %s", hosts)
+    except Exception as e:
+        logger.error("Error getting hosts: %s", e)
+        return jsonify({"error": f"Error getting hosts: {e}"}), 500
+
+    return jsonify(host_dict_list), 200
+
+
 @app.route("/v1/hosts/<string:host_id>", methods=["GET"])
 def get_host(host_id):
     """Get a host"""
 
-    host = host_get_handler(host_id)
+    host = host_host_id_get_handler(host_id)
 
     return jsonify(host.dict()), 200
 
