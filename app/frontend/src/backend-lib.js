@@ -60,7 +60,7 @@ export class Backend {
             body: JSON.stringify({
                 engine: 'gpt-4',
                 taskDescription: task_description,
-                host_id: '13e378c7-2ee6-4fef-bf1b-1893c97beb3e',
+                host_id: global.HOST_ID,
                 user: 'root',
                 supervised: true
             })

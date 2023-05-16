@@ -12,12 +12,12 @@ class HostBase(BaseModel):
     description: str
     ip: Optional[str]
     username: str = "root"
+    password: Optional[str]
 
 
 class HostCreate(HostBase):
     """Host creation model"""
 
-    password: Optional[str]
 
 
 class Host(HostBase):

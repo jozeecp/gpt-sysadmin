@@ -1,4 +1,5 @@
-"""/host/{host_id} GET method handler."""
+"""v1/hosts GET method handler"""
+from typing import List
 
 from libs.host_service import HostService
 from libs.utils import LoggingService
@@ -7,15 +8,14 @@ from models.host import Host
 logger = LoggingService.get_logger(__name__)
 
 
-def handler(host_id: str) -> Host:
-    """GET host"""
+def handler() -> List[Host]:
+    """GET all hosts"""
 
-    logger.info("Getting host...")
-    logger.debug("Received host ID: %s", host_id)
+    logger.info("Getting hosts...")
 
     host_service = HostService()
 
-    # get host
-    host = host_service.get_host(host_id)
+    # get hosts
+    hosts = host_service.get_hosts()
 
-    return host
+    return hosts
