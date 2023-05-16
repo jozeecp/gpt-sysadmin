@@ -1,10 +1,13 @@
-from models.task import Task, GPTMessage, HostMessage
-from libs.task_service import TaskService, MessageService
-from libs.generative_cmd_service import GenerativeCmdService
+"""v1/tasks/{task_id}/confirm handler."""
+
 from libs.cmd_service import CmdService
+from libs.generative_cmd_service import GenerativeCmdService
+from libs.task_service import MessageService, TaskService
 from libs.utils import LoggingService
+from models.task import GPTMessage, HostMessage, Task
 
 logger = LoggingService.get_logger(__name__)
+
 
 def handler(task_id: str) -> Task:
     """

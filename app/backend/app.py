@@ -8,15 +8,12 @@ from flask_cors import CORS
 from functions.hosts.get.handler import handler as host_get_handler
 from functions.hosts.post.handler import handler as host_post_handler
 from functions.tasks.post.handler import handler as task_post_handler
+from functions.tasks.task_id.confirm.handler import handler as task_id_confirm_handler
 from functions.tasks.task_id.get.handler import handler as task_id_get_handler
 from functions.tasks.task_id.put.handler import handler as task_id_put_handler
-from functions.tasks.task_id.confirm.handler import handler as task_id_confirm_handler
-from functions.tasks.task_id.messages.post.handler import (
-    handler as task_id_messages_post_handler,
-)
 from libs.utils import LoggingService
 from models.host import HostCreate
-from models.task import GPTMessage, HostMessage, Task
+from models.task import Task
 
 # Set up logging
 logger = LoggingService.get_logger(__name__)

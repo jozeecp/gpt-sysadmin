@@ -1,10 +1,10 @@
 """/v1/task/{task_id}/ PUT handler."""
 
-from typing import Dict, Any
+from typing import Any, Dict
 
-from models.task import Task
 from libs.task_service import TaskService
 from libs.utils import LoggingService
+from models.task import Task
 
 logger = LoggingService.get_logger(__name__)
 

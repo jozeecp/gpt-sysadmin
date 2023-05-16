@@ -8,8 +8,8 @@ Utilizes the OpenAI API to generate commands.
 import ast
 import json
 import os
-from typing import Any, Dict, List
 from json.decoder import JSONDecodeError
+from typing import Any, Dict, List
 
 import openai
 from libs.base_service import BaseService

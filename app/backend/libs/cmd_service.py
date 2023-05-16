@@ -8,7 +8,7 @@ import paramiko
 from libs.base_service import BaseService
 from libs.utils import LoggingService
 from models.host import HostCreate
-from models.task import Message, Task, HostMessage
+from models.task import HostMessage, Message, Task
 
 logger = LoggingService.get_logger(__name__)
 
@@ -28,7 +28,7 @@ class CmdService(BaseService):
         """Execute a command."""
         cmd = command.machine_msg
         with self.ssh_connection(self.task) as client:
-            output =  self._exec_command(client, cmd)
+            output = self._exec_command(client, cmd)
             parsed_output = self.parse_output(output)
             return HostMessage(machine_msg=parsed_output)
 
@@ -61,8 +61,8 @@ class CmdService(BaseService):
             hostname=task.host.hostname,
             username=task.host.username,
             # username="root",
-            # pkey=private_key,
-            password="Thanksjose!",
+            pkey=private_key,
+            # password="Thanksjose!",
         )
         try:
             yield ssh_client
