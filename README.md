@@ -5,9 +5,7 @@ gpt-sysadmin can SSH into host and autonomously execute intructions
 ## Deployment (Local)
 
 ```bash
-export PUBLIC_KEY="$(cat ./test-key.pub)"
-docker-compose build
-docker-compose up
+./deploy.sh
 ```
 
 ## Linting
