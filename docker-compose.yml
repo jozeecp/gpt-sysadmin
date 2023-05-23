@@ -46,8 +46,6 @@ services:
       # - frontend
     env_file:
       - test.env
-    # volumes:
-    #   - ./test_idrsa_key.pub:/backend_idrsa_key.pub  # Bind mount the SSH key
 
 volumes:
   redis-data:
