@@ -3,6 +3,7 @@ import json
 import os
 from typing import List
 
+import requests
 from libs.base_service import BaseService
 from libs.utils import LoggingService
 from models.host import Host, HostCreate
@@ -21,27 +22,25 @@ class HostService(BaseService):
     def create_host(self, host_create: HostCreate) -> Host:
         """Create a new host"""
 
-        # TODO: Moving this test to an event-driven service
-        # quick SSH connection test
-        # logger.debug("Testing SSH connection...")
-        # test_result = CmdService.ssh_connection_test(host_create)
-        # if not test_result:
-        #     # could not connect to host, will register key with password
-        #     try:
-        #         logger.debug(
-        #             "Could not connect to host, registering key with password..."
-        #         )
-        #         CmdService.register_ssh_key(host_create)
-        #     except Exception as e:
-        #         logger.error("Error registering key with password: %s", e)
-        #         raise e
-
         # create host from host create
         host = Host(**host_create.dict())
 
         # register host in redis
         self.redis_client.set(host.host_id, host.json())
         logger.debug("Host registered in redis: %s", host.json())
+
+        # if no ip, return early
+        if not host.ip:
+            return host
+
+        # register host in DNS
+        dns_api_url = "http://coredns-api:5001/hosts"
+        dns_api_data = {
+            "hostname": host.hostname,
+            "ip": host.ip,
+        }
+        response = requests.post(dns_api_url, json=dns_api_data)
+        assert response.status_code == 200, response.text
 
         return host
 
@@ -67,7 +66,23 @@ class HostService(BaseService):
                 hosts.append(host)
             except ValueError:
                 logger.error("Bad host: %s", host_json)
+                logger.debug("Deleting bad host...")
+                self.redis_client.delete(host_id)
                 continue
         logger.debug("Hosts retrieved from redis: %s", hosts)
 
         return hosts
+
+    def delete_host(self, host_id: str) -> None:
+        """Delete a host from redis"""
+
+        # if ip, delete host from DNS
+        host = self.get_host(host_id)
+        if host.ip:
+            dns_api_url = f"http://coredns-api:5001/hosts/{host.ip}"
+            response = requests.delete(dns_api_url)
+            assert response.status_code == 200, response.text
+
+        # delete host from redis
+        self.redis_client.delete(host_id)
+        logger.debug("Host deleted from redis.")

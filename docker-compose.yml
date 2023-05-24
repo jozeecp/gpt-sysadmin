@@ -47,5 +47,43 @@ services:
     env_file:
       - test.env
 
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - ./app/prometheus:/etc/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--web.enable-lifecycle'
+    ports:
+      - 9090:9090
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - 3000:3000
+    volumes:
+      - grafana-storage:/var/lib/grafana
+      - ./app/grafana/provisioning:/etc/grafana/provisioning
+    depends_on:
+      - prometheus
+
+  coredns:
+    build: ./app/coredns/coredns-service
+    ports:
+      - 53:53
+    volumes:
+      # shared /etc/hosts file
+      - shared-etc:/etc/coredns
+
+  coredns-api:
+    build: ./app/coredns/dns-mgmt-service
+    ports:
+      - 5001:5001
+    volumes:
+      # shared /etc/hosts file
+      - shared-etc:/etc/coredns
+
 volumes:
   redis-data:
+  grafana-storage:
+  shared-etc:

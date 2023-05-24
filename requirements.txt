@@ -9,3 +9,4 @@ redis==4.5.4
 fakeredis==2.10.2
 cryptography==40.0.2
 Flask-Cors==3.0.10
+prometheus-client==0.16.0

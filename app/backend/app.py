@@ -1,11 +1,13 @@
 """Backend API for the task manager"""
 import os
 import sys
+import time
 from uuid import uuid4
 
-from flask import Flask, jsonify, request
+from flask import Flask, Response, jsonify, request
 from flask_cors import CORS
 from functions.hosts.get.handler import handler as host_get_handler
+from functions.hosts.host_id.delete.handler import handler as host_delete_handler
 from functions.hosts.host_id.get.handler import handler as host_host_id_get_handler
 from functions.hosts.post.handler import handler as host_post_handler
 from functions.tasks.post.handler import handler as task_post_handler
@@ -15,6 +17,7 @@ from functions.tasks.task_id.put.handler import handler as task_id_put_handler
 from libs.utils import LoggingService
 from models.host import HostCreate
 from models.task import Task
+from prometheus_client import CONTENT_TYPE_LATEST, Counter, Histogram, generate_latest
 
 # Set up logging
 logger = LoggingService.get_logger(__name__)
@@ -27,10 +30,18 @@ CORS(app, resources={r"*": {"origins": "*"}})
 
 tasks = {}
 
+requests_total = Counter("requests_total", "Total number of HTTP requests.")
+request_hist = Histogram(
+    "confirm_request_latency_seconds", "Request latency in seconds."
+)
+
 
 @app.route("/v1/tasks", methods=["POST"])
 def create_task():
     """Create a new task"""
+
+    # increment the counter
+    requests_total.inc()
     task_data = request.json
 
     logger.info("Creating task...")
@@ -59,6 +70,9 @@ def create_task():
 # def send_message(task_id):
 #     """Send a message to a task"""
 
+#     increment the counter
+#     requests_total.inc()
+
 #     machine_msg = request.json.get("machine_msg")
 
 #     msg = HostMessage(machine_msg=machine_msg)
@@ -73,6 +87,9 @@ def create_task():
 def get_task(task_id):
     """Get a task"""
 
+    # increment the counter
+    requests_total.inc()
+
     logger.debug("Getting task: %s", task_id)
 
     task = task_id_get_handler(task_id)
@@ -82,6 +99,9 @@ def get_task(task_id):
 @app.route("/v1/tasks/<string:task_id>", methods=["PUT"])
 def modify_task(task_id):
     """Modify a task"""
+
+    # increment the counter
+    requests_total.inc()
 
     logger.debug("Getting task: %s", task_id)
     request_data = request.json
@@ -100,9 +120,15 @@ def modify_task(task_id):
 def confirm_next_step(task_id):
     """Go to the next step in a task"""
 
+    # increment the counter
+    requests_total.inc()
+
     logger.debug("Getting task: %s", task_id)
     try:
+        t_0 = time.time()
         task = task_id_confirm_handler(task_id)
+        t_1 = time.time()
+        request_hist.observe(t_1 - t_0)
     except Exception as e:
         logger.error("Error confirming task: %s", e)
         return jsonify({"error": f"Error confirming task: {e}"}), 500
@@ -112,6 +138,9 @@ def confirm_next_step(task_id):
 @app.route("/v1/hosts", methods=["POST"])
 def create_host():
     """Create a new host"""
+
+    # increment the counter
+    requests_total.inc()
 
     host_data = request.json
 
@@ -139,6 +168,9 @@ def create_host():
 def get_hosts():
     """Get all hosts"""
 
+    # increment the counter
+    requests_total.inc()
+
     logger.debug("Getting all hosts...")
     try:
         hosts = host_get_handler()
@@ -155,9 +187,38 @@ def get_hosts():
 def get_host(host_id):
     """Get a host"""
 
+    # increment the counter
+    requests_total.inc()
+
     host = host_host_id_get_handler(host_id)
 
     return jsonify(host.dict()), 200
+
+
+@app.route("/v1/hosts/<string:host_id>", methods=["DELETE"])
+def delete_host(host_id):
+    """Delete a host"""
+
+    # increment the counter
+    requests_total.inc()
+
+    logger.debug("Deleting host: %s", host_id)
+    try:
+        host_delete_handler(host_id)
+    except Exception as e:
+        logger.error("Error deleting host: %s", e)
+        return jsonify({"error": f"Error deleting host: {e}"}), 500
+
+    return jsonify({}), 200
+
+
+# prometheus metrics endpoint
+@app.route("/metrics")
+def metrics():
+    """Prometheus metrics endpoint"""
+
+    # increment the counter
+    return Response(generate_latest(), mimetype=CONTENT_TYPE_LATEST)
 
 
 if __name__ == "__main__":
