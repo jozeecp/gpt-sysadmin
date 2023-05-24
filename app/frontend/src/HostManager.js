@@ -5,7 +5,7 @@ export default function HostManager() {
     const [hostname, setHostname] = useState('');
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const [ip_address, setIpAddress] = useState('');
+    const [ip, setIpAddress] = useState('');
     const [description, setDescription] = useState('');
     const [hosts, setHosts] = useState([]);
     const [selectedHostId, setSelectedHostId] = useState(null);
@@ -32,7 +32,7 @@ export default function HostManager() {
             hostname,
             username,
             password,
-            ip_address,
+            ip,
             description
         })
             .then(response => {
@@ -49,14 +49,34 @@ export default function HostManager() {
             });
     };
 
+    const deleteHost = () => {
+        // Delete host from backend
+        const path = `/v1/hosts/${selectedHostId}`;
+        axios.delete(baseUrl + path)
+            .then(response => {
+                // Update hosts with new host from backend
+                setHosts(oldHosts => oldHosts.filter(host => host.host_id !== selectedHostId));
+                setSelectedHostId(null);
+            })
+            .catch(error => {
+                console.error('Error deleting host:', error);
+            });
+    };
+
     const handleHostSelect = (hostId) => {
         // Here you could do something when a host is selected
         console.log(`Selected host with id ${hostId}`);
-        global.HOST_ID = hostId;
-        console.log("global.HOST_ID: ", global.HOST_ID);
+        // global.HOST_ID = hostId;
+        // console.log("global.HOST_ID: ", global.HOST_ID);
         setSelectedHostId(hostId);
     };
 
+    const chooseHost = () => {
+        // Choose host
+        global.HOST_ID = selectedHostId;
+        console.log("global.HOST_ID: ", global.HOST_ID);
+        setSelectedHostId(null);
+    };
     return (
         <div
             style={{padding: '20px'}}
@@ -86,7 +106,7 @@ export default function HostManager() {
             <div>
                 <input
                     placeholder="IP Address"
-                    value={ip_address}
+                    value={ip}
                     onChange={e => setIpAddress(e.target.value)}
                 />
             </div>
@@ -114,6 +134,12 @@ export default function HostManager() {
                     {host.hostname} ({host.username})
                 </div>
             ))}
+            <div>
+                <button onClick={deleteHost}>Delete Host</button>
+            </div>
+            <div>
+                <button onClick={chooseHost}>Choose Host</button>
+            </div>
         </div>
     );
 }

@@ -41,11 +41,18 @@ echo ""
 echo ""
 echo "Application started at: $(date)"
 
+# step 4.5: print IPs of services
+docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps -aqf "name=backend")
+docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps -aqf "name=frontend")
+docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps -aqf "name=redis")
+docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps -aqf "name=test_host")
+
 # Step 5: Print some useful commands the user can use to monitor or interact with the containers
 echo ""
 echo ""
 echo "Access UI at http://localhost:80"
 echo "API running at http://localhost:5000"
+echo "Grafana monitoring UI running at http://localhost:3000"
 echo ""
 echo ""
 echo "To monitor the logs of the containers, you can use:"
