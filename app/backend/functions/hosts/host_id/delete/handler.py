@@ -10,5 +10,3 @@ def handler(host_id) -> None:
     # delete host
     host_service = HostService()
     host_service.delete_host(host_id)
-
-    return
