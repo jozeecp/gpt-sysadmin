@@ -8,6 +8,7 @@ export default function HostManager() {
     const [ip_address, setIpAddress] = useState('');
     const [description, setDescription] = useState('');
     const [hosts, setHosts] = useState([]);
+    const [selectedHostId, setSelectedHostId] = useState(null);
 
     const baseUrl = 'http://localhost:5000';
 
@@ -52,42 +53,64 @@ export default function HostManager() {
         // Here you could do something when a host is selected
         console.log(`Selected host with id ${hostId}`);
         global.HOST_ID = hostId;
-        console.log("process.env.HOST_ID: ", global.HOST_ID);
+        console.log("global.HOST_ID: ", global.HOST_ID);
+        setSelectedHostId(hostId);
     };
 
     return (
-        <div>
+        <div
+            style={{padding: '20px'}}
+        >
             <h2>Register Host</h2>
-            <input
-                placeholder="Hostname"
-                value={hostname}
-                onChange={e => setHostname(e.target.value)}
-            />
-            <input
-                placeholder="Username"
-                value={username}
-                onChange={e => setUsername(e.target.value)}
-            />
-            <input
-                placeholder="Password"
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-            />
-            <input
-                placeholder="IP Address"
-                value={ip_address}
-                onChange={e => setIpAddress(e.target.value)}
-            />
-            <input
-                placeholder="Description"
-                value={description}
-                onChange={e => setDescription(e.target.value)}
-            />
-            <button onClick={registerHost}>Register Host</button>
+            <div>
+                <input
+                    placeholder="Hostname"
+                    value={hostname}
+                    onChange={e => setHostname(e.target.value)}
+                />
+            </div>
+            <div>
+                <input
+                    placeholder="Username"
+                    value={username}
+                    onChange={e => setUsername(e.target.value)}
+                />
+            </div>
+            <div>
+                <input
+                    placeholder="Password"
+                    value={password}
+                    onChange={e => setPassword(e.target.value)}
+                />
+            </div>
+            <div>
+                <input
+                    placeholder="IP Address"
+                    value={ip_address}
+                    onChange={e => setIpAddress(e.target.value)}
+                />
+            </div>
+            <div>
+                <input
+                    placeholder="Description"
+                    value={description}
+                    onChange={e => setDescription(e.target.value)}
+                />
+            </div>
+            <div>
+                <button onClick={registerHost}>Register Host</button>
+            </div>
 
             <h2>Select Host</h2>
             {hosts.map(host => (
-                <div key={host.host_id} onClick={() => handleHostSelect(host.host_id)}>
+                <div 
+                    key={host.host_id} 
+                    style={{
+                        backgroundColor: host.host_id === selectedHostId ? 'lightgray' : 'transparent',
+                        color: host.host_id === selectedHostId ? 'black' : 'lightgray',
+                    }}
+                    onClick={() => handleHostSelect(host.host_id)}
+                >
                     {host.hostname} ({host.username})
                 </div>
             ))}

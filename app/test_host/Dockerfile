@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM debian:latest
 
 # Install OpenSSH server and any other necessary packages
 RUN apt-get update && \
@@ -15,8 +15,8 @@ RUN mkdir -p /root/.ssh/ && \
     chmod 600 /root/.ssh/authorized_keys && \
     mkdir -p /run/sshd
 
-# Set the root password (replace "your_password" with the desired password)
-RUN echo 'root:Thanksjose!' | chpasswd
+# Set the root password (replace "rootpw" with the desired password)
+RUN echo 'root:rootpw' | chpasswd
 
 # Expose the SSH port
 EXPOSE 22

@@ -100,7 +100,9 @@ class CmdService(BaseService):
 
         logger.debug("setting missing host key policy...")
         ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        with open("/root/.ssh/id_rsa", "r") as key_file:
+
+        assert exists("/root/.ssh/id_rsa"), "SSH key does not exist"
+        with open("/root/.ssh/id_rsa", "r", encoding="utf-8") as key_file:
             logger.debug("key_file: %s", key_file)
             private_key = paramiko.RSAKey.from_private_key(key_file)
             logger.debug("private_key: %s", private_key)

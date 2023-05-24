@@ -6,13 +6,13 @@ import './styles.css';
 import HostManager from './HostManager';
 import { CssBaseline, Container, AppBar, Toolbar, Typography, IconButton, Drawer } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
-import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
+import { createTheme, ThemeProvider } from '@material-ui/core/styles';
 
 
 function App() {
     const [drawerOpen, setDrawerOpen] = useState(false);
     const terminalHandler = new TerminalLib();
-    const darkTheme = createMuiTheme({
+    const darkTheme = createTheme({
         palette: {
             type: 'dark',
         },
